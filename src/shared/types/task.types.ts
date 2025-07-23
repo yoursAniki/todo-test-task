@@ -15,4 +15,4 @@ export interface Task {
 }
 
 export interface CreateTask
-	extends Omit<Task, "createdAt" | "updatedAt" | "status"> {}
+	extends Omit<Task, "createdAt" | "updatedAt" | "status" | "id"> {}

@@ -9,7 +9,12 @@
 			<close @click="deleteProject" color="white" />
 		</div>
 
-		<task-card v-for="task in project.tasks" :task="task" />
+		<task-card
+			v-for="task in project.tasks"
+			:key="task.id"
+			:task="task"
+			@delete-task="deleteTask"
+		/>
 
 		<div
 			@click="addTask(project.id)"
@@ -28,7 +33,7 @@ import Close from "../../../shared/ui/icons/Close.vue";
 
 import { useProjectStore } from "../../../features/project-list/model/store/projectStore";
 import type { Project } from "../../../shared/types/project.types";
-import type { Task, CreateTask } from "../../../shared/types/task.types";
+import type { CreateTask } from "../../../shared/types/task.types";
 
 const props = defineProps<{
 	project: Project;
@@ -42,15 +47,17 @@ const deleteProject = () => emit("delete-project", props.project.id);
 
 const addTask = (projectId: string) => {
 	const taskTemplate: CreateTask = {
-		id: projectId,
 		title: "",
 		tags: [],
 		subtasks: [],
 	};
 
-	console.log(taskTemplate);
+	store.addTaskToProject(taskTemplate, projectId);
+};
 
-	store.addTaskToProject(taskTemplate);
+const deleteTask = (taskId: string) => {
+	console.log(props.project.id, taskId, 'tags');
+	store.deleteTaskFromProject(props.project.id, taskId);
 };
 </script>
 

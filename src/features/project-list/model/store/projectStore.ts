@@ -16,15 +16,18 @@ export const useProjectStore = defineStore("projects", {
 		init() {
 			try {
 				const data = localStorage.getItem("projects");
+
 				this.projects = data ? JSON.parse(data) : [];
 			} catch (e) {
 				console.error(e);
+
 				this.projects = [];
 			}
 		},
 
 		addProject(project: CreateProject) {
 			const id = uuidv4();
+
 			this.projects.push({ ...project, id });
 		},
 
@@ -44,9 +47,7 @@ export const useProjectStore = defineStore("projects", {
 			project.name = newName;
 		},
 
-		addTaskToProject(task: CreateTask) {
-			const projectId = task.id;
-
+		addTaskToProject(task: CreateTask, projectId: string) {
 			const project = this.projects.find(p => p.id === projectId);
 
 			if (!project) return;
@@ -54,14 +55,25 @@ export const useProjectStore = defineStore("projects", {
 			const createdAt = new Date();
 			const updatedAt = new Date();
 			const status = TaskStatus.Todo;
+			const id = uuidv4();
 
 			project.tasks.push({
 				...task,
 				createdAt,
 				updatedAt,
 				status,
+				id,
 			});
 		},
+
+		deleteTaskFromProject(projectId: string, taskId: string) {
+			const project = this.projects.find(p => p.id === projectId);
+
+			if (!project) return;
+
+			project.tasks = project.tasks.filter(task => task.id !== taskId);
+		},
 	},
+
 	persist: true,
 });

@@ -4,7 +4,7 @@
 			<div v-if="!projects.length" class="text-2xl">
 				В настоящий момент проектов нет.
 			</div>
-			<div v-for="project in projects">
+			<div v-for="project in projects" :key="project.id">
 				<project-card
 					:project="project"
 					@delete-project="store.deleteProject"
@@ -17,6 +17,7 @@
 			>
 			<primary-button
 				@click="store.deleteAllProjects"
+				:disabled="!projects.length"
 				color="reject"
 				class="mt-3"
 				>Удалить проекты</primary-button
