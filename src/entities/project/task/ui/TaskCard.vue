@@ -14,8 +14,12 @@
 		<tag-list v-model="taskTemplate.tags" />
 
 		<div class="flex flex-col gap-1">
-			<span class="text-s">Создано: {{ taskTemplate.createdAt }}</span>
-			<span class="text-s">Обновлено: {{ taskTemplate.updatedAt }}</span>
+			<span class="text-s"
+				>Создано: {{ formatDate(taskTemplate.createdAt) }}</span
+			>
+			<span class="text-s"
+				>Обновлено: {{ formatDate(taskTemplate.updatedAt) }}</span
+			>
 		</div>
 
 		<trash @click="deleteTask" color="red" />
@@ -30,6 +34,7 @@ import Trash from "../../../../shared/ui/icons/Trash.vue";
 import { ref } from "vue";
 import type { Task } from "../../../../shared/types/task.types";
 import { TaskStatus } from "../../../../shared/types/task.types";
+import { formatDate } from "../../../../shared/utils/formatDate";
 
 const props = defineProps<{
 	task: Task;
@@ -38,16 +43,6 @@ const props = defineProps<{
 const emit = defineEmits(["delete-task"]);
 
 const taskTemplate = ref<Task>({ ...props.task });
-
-const formatDate = (date: Date) => {
-	return date.toLocaleString("ru-RU", {
-		day: "2-digit",
-		month: "2-digit",
-		year: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-	});
-};
 
 const deleteTask = () => emit("delete-task", props.task.id);
 </script>
