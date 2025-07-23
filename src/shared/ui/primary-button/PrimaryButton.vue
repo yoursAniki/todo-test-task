@@ -23,7 +23,7 @@ const props = defineProps({
 	},
 	rounded: {
 		type: Number,
-		default: 14,
+		default: 10,
 	},
 });
 
