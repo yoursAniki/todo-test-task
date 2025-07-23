@@ -1,7 +1,7 @@
 export enum TaskStatus {
-  Todo = "todo",
-  InProgress = "in-progress",
-  Done = "done"
+	Todo = "todo",
+	InProgress = "in-progress",
+	Done = "done",
 }
 
 export interface Task {
@@ -13,3 +13,6 @@ export interface Task {
 	createdAt: Date;
 	updatedAt: Date;
 }
+
+export interface CreateTask
+	extends Omit<Task, "createdAt" | "updatedAt" | "status"> {}

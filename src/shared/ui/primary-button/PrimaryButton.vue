@@ -73,10 +73,11 @@ const computeRounded = computed(() => {
 	background: $black;
 }
 
-.btn-secondary {
-}
-
 .btn-accept {
 	background: $accept-color;
+}
+
+.btn-reject {
+	background: $reject-color;
 }
 </style>

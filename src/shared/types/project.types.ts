@@ -5,3 +5,5 @@ export interface Project {
 	name: string;
 	tasks: Task[];
 }
+
+export interface CreateProject extends Omit<Project, "id"> {}

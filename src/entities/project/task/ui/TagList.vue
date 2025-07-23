@@ -8,21 +8,17 @@
 				class="task-tag py-1 px-0.5 flex gap-1"
 			>
 				<span>{{ tag }}</span>
-				<img
-					@click="removeTag(index)"
-					src="/src/shared/ui/icons/close.svg"
-					color="black"
-					class="cursor-pointer select-none"
-					alt="close icon"
-				/>
+				<close @click="removeTag(index)" color="white" />
 			</li>
 		</ul>
 		<div class="flex mt-1 gap-1">
 			<input
 				v-model.trim="newTag"
 				@keyup.enter="addTag(newTag)"
+				placeholder="Добавить тег"
 				class="max-w-[150px]"
 				type="text"
+				name="new-tag"
 			/>
 			<primary-button
 				@click="addTag(newTag)"
@@ -35,7 +31,9 @@
 </template>
 
 <script lang="ts" setup>
+// components
 import { PrimaryButton } from "../../../../shared/ui/primary-button";
+import Close from "../../../../shared/ui/icons/Close.vue";
 
 import { computed, ref } from "vue";
 
