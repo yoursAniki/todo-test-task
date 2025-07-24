@@ -8,7 +8,7 @@
 				class="task-tag py-1 px-0.5 flex gap-1 items-center"
 			>
 				<span>{{ tag }}</span>
-				<close @click="removeTag(index)" color="white" />
+				<close-icon @click="removeTag(index)" color="white" />
 			</li>
 		</ul>
 		<div class="flex flex-wrap mt-1 gap-1">
@@ -33,7 +33,7 @@
 <script lang="ts" setup>
 // components
 import { PrimaryButton } from "../../../../shared/ui/primary-button";
-import Close from "../../../../shared/ui/icons/Close.vue";
+import CloseIcon from "../../../../shared/ui/icons/CloseIcon.vue";
 
 import { computed, ref } from "vue";
 

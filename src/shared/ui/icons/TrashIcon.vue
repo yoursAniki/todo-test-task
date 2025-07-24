@@ -40,7 +40,7 @@ const props = defineProps({
 </script>
 
 <style scoped lang="scss">
-.close-icon {
+.trash-icon {
 	.white {
 		fill: $primary-color;
 	}

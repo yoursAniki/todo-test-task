@@ -33,7 +33,7 @@
 					>
 				</div>
 
-				<trash @click="deleteTask" color="red" />
+				<trash-icon @click="deleteTask" color="red" />
 			</div>
 
 			<div
@@ -62,7 +62,7 @@
 			@click="addSubtask"
 			class="subtask-card flex items-center gap-3 border-2 border-dashed border-t-0 border-gray-400 px-2 py-1 cursor-pointer select-none"
 		>
-			<close color="black" class="rotate-45" />
+			<close-icon color="black" class="rotate-45" />
 			<span class="text-gray-400">Добавить подзадачу</span>
 		</div>
 	</div>
@@ -72,8 +72,8 @@
 // components
 import TagList from "./TagList.vue";
 import { PrimaryButton } from "../../../../shared/ui/primary-button";
-import Close from "../../../../shared/ui/icons/Close.vue";
-import Trash from "../../../../shared/ui/icons/Trash.vue";
+import CloseIcon from "../../../../shared/ui/icons/CloseIcon.vue";
+import TrashIcon from "../../../../shared/ui/icons/TrashIcon.vue";
 
 import { computed, inject, ref, watch } from "vue";
 import type { Task } from "../../../../shared/types/task.types";

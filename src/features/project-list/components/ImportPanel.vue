@@ -18,7 +18,7 @@
 				name="file-import"
 				accept=".aes"
 			/>
-			<close @click="closeFile" class="z-20" />
+			<close-icon v-if="fileContent" @click="closeFile" class="z-20" />
 		</div>
 
 		<primary-button @click="importData">Импортировать</primary-button>
@@ -28,7 +28,7 @@
 <script setup lang="ts">
 // components
 import { PrimaryButton } from "../../../shared/ui/primary-button";
-import Close from "../../../shared/ui/icons/Close.vue";
+import CloseIcon from "../../../shared/ui/icons/CloseIcon.vue";
 
 import { ref } from "vue";
 import { useProjectStore } from "../model/store/projectStore";

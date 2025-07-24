@@ -6,14 +6,14 @@
 				placeholder="Название проекта"
 				name="project-name"
 			/>
-			<close @click="deleteProject" color="white" />
+			<close-icon @click="deleteProject" color="white" />
 		</div>
 
 		<div
 			@click="addTask(project.id)"
 			class="flex items-center gap-3 border-2 border-dashed border-t-0 px-2 py-4 cursor-pointer select-none mb-5"
 		>
-			<close color="black" class="rotate-45" />
+			<close-icon color="black" class="rotate-45" />
 			<span>Добавить задачу</span>
 		</div>
 
@@ -34,7 +34,7 @@
 <script lang="ts" setup>
 // components
 import { TaskCard } from "../task";
-import Close from "../../../shared/ui/icons/Close.vue";
+import CloseIcon from "../../../shared/ui/icons/CloseIcon.vue";
 
 import { useProjectStore } from "../../../features/project-list/model/store/projectStore";
 import type { Project } from "../../../shared/types/project.types";

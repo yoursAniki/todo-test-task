@@ -8,8 +8,8 @@ import { TaskStatus } from "../../../../shared/types/task.types";
 import { v4 as uuidv4 } from "uuid";
 import { findTask } from "../../../../shared/utils/findTask";
 import { loadAppData, saveAppData } from "../../../../shared/libs/localStorage";
-import { updateTaskRecursive } from "../../../../shared/libs/updateTask";
-import { updateParentUpdatedAt } from "../../../../shared/libs/updateParentDate";
+import { updateTaskRecursive } from "../../../../shared/utils/updateTask";
+import { updateParentUpdatedAt } from "../../../../shared/utils/updateParentDate";
 
 export const useProjectStore = defineStore("projects", {
 	state: () => ({

@@ -26,7 +26,7 @@ import { useProjectStore } from "../features/project-list/model/store/projectSto
 import { useFiltersStore } from "../features/search/model/store/filterStore";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
-import { filterProjectsWithTasks } from "../shared/libs/filterTasks";
+import { filterProjectsWithTasks } from "../shared/utils/filterTasks";
 
 const projectStore = useProjectStore();
 const filterStore = useFiltersStore();
