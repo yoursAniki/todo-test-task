@@ -9,20 +9,24 @@
 			<close @click="deleteProject" color="white" />
 		</div>
 
-		<task-card
-			v-for="task in project.tasks"
-			:key="task.id"
-			:task="task"
-			@delete-task="deleteTask"
-			@update-task="updateTask"
-		/>
-
 		<div
 			@click="addTask(project.id)"
-			class="flex items-center gap-3 border-2 border-dashed border-t-0 px-2 py-4 cursor-pointer select-none"
+			class="flex items-center gap-3 border-2 border-dashed border-t-0 px-2 py-4 cursor-pointer select-none mb-5"
 		>
 			<close color="black" class="rotate-45" />
 			<span>Добавить задачу</span>
+		</div>
+
+		<div class="flex flex-col gap-5">
+			<task-card
+				v-for="(task, index) in project.tasks"
+				:index="index"
+				:key="task.id"
+				:task="task"
+				:depth="0"
+				@delete-task="deleteTask"
+				@update-task="updateTask"
+			/>
 		</div>
 	</div>
 </template>
@@ -35,6 +39,7 @@ import Close from "../../../shared/ui/icons/Close.vue";
 import { useProjectStore } from "../../../features/project-list/model/store/projectStore";
 import type { Project } from "../../../shared/types/project.types";
 import type { CreateTask, Task } from "../../../shared/types/task.types";
+import { provide } from "vue";
 
 const props = defineProps<{
 	project: Project;
@@ -57,13 +62,14 @@ const addTask = (projectId: string) => {
 };
 
 const deleteTask = (taskId: string) => {
-	console.log(props.project.id, taskId, "tags");
 	store.deleteTaskFromProject(props.project.id, taskId);
 };
 
 const updateTask = (task: Task) => {
 	store.saveTaskToProject(props.project.id, task);
 };
+
+provide("projectId", props.project.id);
 </script>
 
 <style scoped lang="scss">

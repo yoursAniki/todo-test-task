@@ -6,6 +6,7 @@ import type {
 import type { Task, CreateTask } from "../../../../shared/types/task.types";
 import { TaskStatus } from "../../../../shared/types/task.types";
 import { v4 as uuidv4 } from "uuid";
+import { findTask } from "../../../../shared/utils/findTask";
 
 export const useProjectStore = defineStore("projects", {
 	state: () => ({
@@ -87,6 +88,80 @@ export const useProjectStore = defineStore("projects", {
 				...resultTask,
 				updatedAt: new Date(),
 			};
+		},
+
+		deleteSubtaskFromProject(projectId: string, taskId: string) {
+			const project = this.projects.find(p => p.id === projectId);
+			if (!project) return;
+
+			const deleteTaskRecursive = (tasks: Task[], id: string): boolean => {
+				const index = tasks.findIndex(t => t.id === id);
+				if (index !== -1) {
+					tasks.splice(index, 1);
+					return true;
+				}
+
+				for (const task of tasks) {
+					if (task.subtasks && deleteTaskRecursive(task.subtasks, id)) {
+						return true;
+					}
+				}
+				return false;
+			};
+
+			deleteTaskRecursive(project.tasks, taskId);
+		},
+
+		addSubtaskToTask(
+			projectId: string,
+			parentTaskId: string,
+			subtask: CreateTask
+		) {
+			const project = this.projects.find(p => p.id === projectId);
+			if (!project) return;
+
+			const parentTask = findTask(project.tasks, parentTaskId);
+			if (!parentTask) return;
+
+			if (!parentTask.subtasks) parentTask.subtasks = [];
+
+			const createdAt = new Date();
+			const updatedAt = new Date();
+			const status = TaskStatus.Todo;
+			const id = uuidv4();
+
+			parentTask.subtasks.push({
+				...subtask,
+				createdAt,
+				updatedAt,
+				status,
+				id,
+				subtasks: [],
+			});
+		},
+
+		updateSubtaskInProject(projectId: string, updatedTask: Task) {
+			const project = this.projects.find(p => p.id === projectId);
+			if (!project) return;
+
+			const updateTaskRecursive = (tasks: Task[], task: Task): boolean => {
+				const index = tasks.findIndex(t => t.id === task.id);
+				if (index !== -1) {
+					tasks[index] = {
+						...JSON.parse(JSON.stringify(task)),
+						updatedAt: new Date(),
+					};
+					return true;
+				}
+				for (const t of tasks) {
+					if (t.subtasks && updateTaskRecursive(t.subtasks, task)) {
+						return true;
+					}
+				}
+				return false;
+			};
+
+			updateTaskRecursive(project.tasks, updatedTask);
 		},
 	},
 

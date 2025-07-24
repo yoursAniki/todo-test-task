@@ -1,40 +1,64 @@
 <template>
-	<div class="task-card flex flex-col" :class="computeStatusColor">
-		<div class="flex items-center justify-between gap-3 px-4 py-2">
-			<input
-				v-model="taskData.title"
-				placeholder="Название задачи"
-				class="px-2 py-1"
-				name="title"
-				type="text"
-			/>
-			<select v-model="taskData.status" name="status">
-				<option v-for="status in TaskStatus" :key="status">{{ status }}</option>
-			</select>
+	<div
+		class="flex flex-col"
+		:class="computeStatusColor"
+		:style="{ marginLeft: `${props.depth * 24}px` }"
+	>
+		<div class="task-card flex flex-col">
+			<div class="flex items-center justify-between gap-3 px-4 py-2">
+				<span>{{ index + 1 }}</span>
+				<input
+					v-model="taskData.title"
+					placeholder="Название задачи"
+					class="px-2 py-1"
+					name="title"
+					type="text"
+				/>
+				<select v-model="taskData.status" name="status">
+					<option v-for="status in TaskStatus" :key="status">
+						{{ status }}
+					</option>
+				</select>
 
-			<tag-list v-model="taskData.tags" />
+				<tag-list v-model="taskData.tags" />
 
-			<div class="flex flex-col gap-1">
-				<span class="text-s"
-					>Создано: {{ formatDate(props.task.createdAt) }}</span
-				>
-				<span class="text-s"
-					>Обновлено: {{ formatDate(props.task.updatedAt) }}</span
-				>
+				<div class="flex flex-col gap-1">
+					<span class="text-s"
+						>Создано: {{ formatDate(props.task.createdAt) }}</span
+					>
+					<span class="text-s"
+						>Обновлено: {{ formatDate(props.task.updatedAt) }}</span
+					>
+				</div>
+
+				<trash @click="deleteTask" color="red" />
 			</div>
 
-			<trash @click="deleteTask" color="red" />
-		</div>
+			<div v-if="isDataChanged" class="flex justify-center gap-3 pb-2">
+				<primary-button
+					@click="saveTask"
+					text="Сохранить"
+					class="save-button"
+					color="accept"
+				/>
 
-		<div v-if="isDataChanged" class="flex justify-center gap-3 pb-2">
-			<primary-button
-				@click="saveTask"
-				text="Сохранить"
-				class="save-button"
-				color="accept"
+				<primary-button @click="resetTask" text="Отмена" color="reject" />
+			</div>
+			<task-card
+				v-for="(subtask, index) in task.subtasks"
+				:task="subtask"
+				:index="index"
+				:depth="(props.depth ?? 0) + 1"
+				@delete-subtask="deleteSubtask"
+				@update-subtask="updateSubtask"
 			/>
-
-			<primary-button @click="resetTask" text="Отмена" color="reject" />
+		</div>
+		<div
+			@click="addSubtask"
+			class="subtask-card flex items-center gap-3 border-2 border-dashed border-t-0 mb-4 border-gray-400 px-2 py-1 cursor-pointer select-none"
+		>
+			<close color="black" class="rotate-45" />
+			<span class="text-gray-400">Добавить подзадачу</span>
 		</div>
 	</div>
 </template>
@@ -43,20 +67,34 @@
 // components
 import TagList from "./TagList.vue";
 import { PrimaryButton } from "../../../../shared/ui/primary-button";
+import Close from "../../../../shared/ui/icons/Close.vue";
 import Trash from "../../../../shared/ui/icons/Trash.vue";
 
-import { computed, ref } from "vue";
+import { computed, inject, ref } from "vue";
 import type { Task } from "../../../../shared/types/task.types";
 import { TaskStatus } from "../../../../shared/types/task.types";
 import { formatDate } from "../../../../shared/utils/formatDate";
+import { useProjectStore } from "../../../../features/project-list/model/store/projectStore";
 
 const props = defineProps<{
 	task: Task;
+	index: number;
+	depth: number;
 }>();
 
-const emit = defineEmits(["delete-task", "update-task"]);
+const emit = defineEmits([
+	"delete-task",
+	"update-task",
+	"delete-subtask",
+	"update-subtask",
+]);
 
-const deleteTask = () => emit("delete-task", props.task.id);
+const store = useProjectStore();
+
+const deleteTask = () => {
+	emit("delete-subtask", props.task.id);
+	emit("delete-task", props.task.id);
+};
 
 const computeStatusColor = computed(() => {
 	if (taskData.value.status === TaskStatus.Todo) return "status-todo";
@@ -80,9 +118,7 @@ const isDataChanged = computed(() => {
 	return !(
 		taskData.value.title === props.task.title &&
 		taskData.value.status === props.task.status &&
-		JSON.stringify(taskData.value.tags) === JSON.stringify(props.task.tags) &&
-		JSON.stringify(taskData.value.subtasks) ===
-			JSON.stringify(props.task.subtasks)
+		JSON.stringify(taskData.value.tags) === JSON.stringify(props.task.tags)
 	);
 });
 
@@ -92,17 +128,40 @@ if (isDataChanged.value)
 	taskData.value = JSON.parse(JSON.stringify(props.task));
 
 const saveTask = () => {
+	emit("update-subtask", taskData.value);
 	emit("update-task", taskData.value);
 };
 const resetTask = () => {
 	taskData.value = JSON.parse(JSON.stringify(props.task));
+};
+
+const projectId = inject<string>("projectId");
+
+const addSubtask = () => {
+	if (!projectId) return;
+
+	store.addSubtaskToTask(projectId, props.task.id, taskTemplate);
+};
+
+const deleteSubtask = (subTaskId: string) => {
+	if (!projectId) return;
+
+	store.deleteSubtaskFromProject(projectId, subTaskId);
+};
+
+const updateSubtask = (subTask: Task) => {
+	if (!projectId) return;
+
+	store.updateSubtaskInProject(projectId, subTask);
 };
 </script>
 
 <style scoped lang="scss">
 .task-card {
 	border: 2px solid $black;
-	border-top: none;
+
+	.task-card {
+	}
 
 	&.status-todo {
 	}
