@@ -3,7 +3,7 @@
 		<div>
 			<div class="filter-title">Статусы</div>
 			<label v-for="status in TaskStatus" :key="status">
-				<input type="checkbox" :value="status" v-model="selectedStatuses" />
+				<input v-model="selectedStatuses" type="checkbox" :value="status" />
 				{{ status }}
 			</label>
 		</div>
@@ -18,38 +18,40 @@
 // components
 import TagList from "../../../entities/project/task/ui/TagList.vue";
 
-import { computed, ref, watch } from "vue";
+import { computed } from "vue";
 import { useFiltersStore } from "../model/store/filterStore";
 import { TaskStatus } from "../../../shared/types/task.types";
 
 const filtersStore = useFiltersStore();
 
 const selectedStatuses = computed({
-  get: () => filtersStore.statuses,
-  set: (val) => filtersStore.setStatuses(val),
+	get: () => filtersStore.statuses,
+	set: val => filtersStore.setStatuses(val),
 });
 
 const selectedTags = computed({
-  get: () => filtersStore.tags,
-  set: (val) => filtersStore.setTags(val),
+	get: () => filtersStore.tags,
+	set: val => filtersStore.setTags(val),
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .filters-popup {
+	z-index: 50;
 	position: absolute;
 	top: 110%;
 	right: 0;
 	z-index: 10;
-	background: #fff;
-	border: 1px solid #aaa;
+	background: $primary-color;
+	border: 1px solid $dark-grey;
 	border-radius: 8px;
 	padding: 16px;
 	min-width: 200px;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-.filter-title {
-	font-weight: bold;
-	margin-bottom: 4px;
+
+	.filter-title {
+		font-weight: bold;
+		margin-bottom: 4px;
+	}
 }
 </style>

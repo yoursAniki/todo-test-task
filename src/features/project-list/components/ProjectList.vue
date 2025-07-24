@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<div class="flex flex-col gap-3 max-h-[500px] overflow-y-auto">
+		<div class="flex flex-col gap-3 max-h-[500px] overflow-auto">
 			<div v-if="!projects.length" class="text-2xl">
 				В настоящий момент проектов нет.
 			</div>
@@ -11,7 +11,7 @@
 				/>
 			</div>
 		</div>
-		<div class="flex justify-center gap-3">
+		<div class="flex flex-wrap justify-center gap-3">
 			<primary-button @click="addProject" color="accept" class="mt-3"
 				>Добавить проект</primary-button
 			>

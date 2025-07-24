@@ -27,6 +27,17 @@ export const useProjectStore = defineStore("projects", {
 			saveAppData({ ...appData, projects: this.projects });
 		},
 
+		exportData() {
+			return {
+				projects: this.projects,
+			};
+		},
+
+		importData(data: { projects: Project[] }) {
+			this.projects = data.projects;
+			this.save();
+		},
+
 		addProject(project: CreateProject) {
 			const id = uuidv4();
 

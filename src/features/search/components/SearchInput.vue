@@ -57,17 +57,15 @@ const showFilters = ref(false);
 	position: relative;
 	margin: 6px 0;
 	margin-bottom: 20px;
-}
 
-.search-input {
-	border: 0;
+	.search-input {
+		border: 2px solid $black;
+		font-size: 24px;
 
-	border: 2px solid $black;
-	font-size: 24px;
-
-	padding: 12px 5px 12px 50px;
-	width: 100%;
-	background: transparent;
-	position: relative;
+		padding: 12px 5px 12px 50px;
+		width: 100%;
+		background: transparent;
+		position: relative;
+	}
 }
 </style>

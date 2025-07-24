@@ -5,7 +5,9 @@
 		:style="{ marginLeft: `${props.depth * 24}px` }"
 	>
 		<div class="task-card flex flex-col">
-			<div class="flex items-center justify-between gap-3 px-4 py-2">
+			<div
+				class="flex flex-wrap items-center md:justify-between justify-center gap-3 sm:px-4 sm:py-2 p-1"
+			>
 				<span>{{ index + 1 }}</span>
 				<input
 					v-model="taskData.title"
@@ -34,7 +36,10 @@
 				<trash @click="deleteTask" color="red" />
 			</div>
 
-			<div v-if="isDataChanged" class="flex justify-center gap-3 pb-2">
+			<div
+				v-if="isDataChanged"
+				class="flex flex-wrap justify-center gap-3 pb-2"
+			>
 				<primary-button
 					@click="saveTask"
 					text="Сохранить"

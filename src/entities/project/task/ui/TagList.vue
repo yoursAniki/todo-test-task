@@ -11,7 +11,7 @@
 				<close @click="removeTag(index)" color="white" />
 			</li>
 		</ul>
-		<div class="flex mt-1 gap-1">
+		<div class="flex flex-wrap mt-1 gap-1">
 			<input
 				v-model.trim="newTag"
 				@keyup.enter="addTag(newTag)"
