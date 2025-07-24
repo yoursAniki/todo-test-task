@@ -3,10 +3,15 @@
 		<input
 			v-model="key"
 			type="password"
+			:disabled="!projectStore.projects.length"
 			placeholder="Ключ для шифрования"
 			class="export-input py-3 px-6"
 		/>
-		<primary-button @click="exportData">Экспортировать</primary-button>
+		<primary-button
+			@click="exportData"
+			:disabled="!projectStore.projects.length"
+			>Экспортировать</primary-button
+		>
 	</div>
 </template>
 
@@ -44,5 +49,9 @@ const exportData = () => {
 .export-input {
 	border: 2px solid $black;
 	border-radius: 10px;
+
+	&:disabled {
+		opacity: 0.5;
+	}
 }
 </style>
