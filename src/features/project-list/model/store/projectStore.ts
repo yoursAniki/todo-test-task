@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import { findTask } from "../../../../shared/utils/findTask";
 import { loadAppData, saveAppData } from "../../../../shared/libs/localStorage";
 import { updateTaskRecursive } from "../../../../shared/libs/updateTask";
+import { updateParentUpdatedAt } from "../../../../shared/libs/updateParentDate";
 
 export const useProjectStore = defineStore("projects", {
 	state: () => ({
@@ -106,12 +107,17 @@ export const useProjectStore = defineStore("projects", {
 
 			updateTaskRecursive(project.tasks, task);
 
+			updateParentUpdatedAt(project.tasks, task.id, new Date());
+
 			this.save();
 		},
 
 		deleteSubtaskFromProject(projectId: string, taskId: string) {
 			const project = this.projects.find(p => p.id === projectId);
+
 			if (!project) return;
+
+			const updatedAt = new Date();
 
 			const deleteTaskRecursive = (tasks: Task[], id: string): boolean => {
 				const index = tasks.findIndex(t => t.id === id);
@@ -122,6 +128,7 @@ export const useProjectStore = defineStore("projects", {
 
 				for (const task of tasks) {
 					if (task.subtasks && deleteTaskRecursive(task.subtasks, id)) {
+						task.updatedAt = updatedAt;
 						return true;
 					}
 				}
@@ -151,6 +158,8 @@ export const useProjectStore = defineStore("projects", {
 			const status = TaskStatus.Todo;
 			const id = uuidv4();
 
+			parentTask.updatedAt = new Date();
+
 			parentTask.subtasks.push({
 				...subtask,
 				createdAt,
@@ -159,6 +168,8 @@ export const useProjectStore = defineStore("projects", {
 				id,
 				subtasks: [],
 			});
+
+			updateParentUpdatedAt(project.tasks, parentTaskId, updatedAt);
 
 			this.save();
 		},
