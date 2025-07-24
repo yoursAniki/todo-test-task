@@ -12,7 +12,6 @@
     "@tailwindcss/vite": "^4.1.11",
     "crypto-js": "^4.2.0",
     "pinia": "^3.0.3",
-    "pinia-plugin-persistedstate": "^4.4.1",
     "tailwindcss": "^4.1.11",
     "uuid": "^11.1.0",
     "vue": "^3.5.17"

@@ -1,6 +1,16 @@
 import type { Project } from "../types/project.types";
 import type { Task, TaskStatus } from "../types/task.types";
 
+/**
+ * Рекурсивно фильтрует задачи по статусу, тегам и поисковому запросу
+ *
+ * @param {Task[]} tasks Массив задач для фильтрации
+ * @param {TaskStatus[]} statuses Список статусов, по которым фильтруются задачи
+ * @param {string[]} tags Список тегов, которые должны присутствовать у задачи
+ * @param {string} search Поисковый запрос для фильтрации по названию задачи
+ * @returns {Task[]} Новый массив задач
+ */
+
 const filterTasksRecursive = (
 	tasks: Task[],
 	statuses: TaskStatus[],
