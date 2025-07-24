@@ -1,5 +1,5 @@
 <template>
-	<div class="task-card flex flex-col">
+	<div class="task-card flex flex-col" :class="computeStatusColor">
 		<div class="flex items-center justify-between gap-3 px-4 py-2">
 			<input
 				v-model="taskData.title"
@@ -27,7 +27,12 @@
 		</div>
 
 		<div v-if="isDataChanged" class="flex justify-center gap-3 pb-2">
-			<primary-button @click="saveTask" text="Сохранить" color="accept" />
+			<primary-button
+				@click="saveTask"
+				text="Сохранить"
+				class="save-button"
+				color="accept"
+			/>
 
 			<primary-button @click="resetTask" text="Отмена" color="reject" />
 		</div>
@@ -53,6 +58,13 @@ const emit = defineEmits(["delete-task", "update-task"]);
 
 const deleteTask = () => emit("delete-task", props.task.id);
 
+const computeStatusColor = computed(() => {
+	if (taskData.value.status === TaskStatus.Todo) return "status-todo";
+	if (taskData.value.status === TaskStatus.InProgress)
+		return "status-in-progress";
+	if (taskData.value.status === TaskStatus.Done) return "status-done";
+});
+
 const taskTemplate = {
 	id: props.task.id,
 	title: "",
@@ -74,19 +86,37 @@ const isDataChanged = computed(() => {
 	);
 });
 
-const taskData = ref<Task>({ ...taskTemplate });
+const taskData = ref<Task>(structuredClone(taskTemplate));
 
-if (isDataChanged.value) taskData.value = JSON.parse(JSON.stringify(props.task));
+if (isDataChanged.value)
+	taskData.value = JSON.parse(JSON.stringify(props.task));
 
 const saveTask = () => {
 	emit("update-task", taskData.value);
 };
-const resetTask = () => {};
+const resetTask = () => {
+	taskData.value = JSON.parse(JSON.stringify(props.task));
+};
 </script>
 
 <style scoped lang="scss">
 .task-card {
 	border: 2px solid $black;
 	border-top: none;
+
+	&.status-todo {
+	}
+
+	&.status-in-progress {
+		background: $yellow;
+	}
+
+	&.status-done {
+		background: $accept-color;
+
+		.save-button {
+			background: $black;
+		}
+	}
 }
 </style>
