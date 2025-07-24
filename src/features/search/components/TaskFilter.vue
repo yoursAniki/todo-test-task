@@ -2,7 +2,7 @@
 	<div class="filters-popup">
 		<div>
 			<div class="filter-title">Статусы</div>
-			<label v-for="status in TaskStatus" :key="status">
+			<label v-for="status in TaskStatus" :key="status" class="flex gap-1">
 				<input v-model="selectedStatuses" type="checkbox" :value="status" />
 				{{ status }}
 			</label>
@@ -10,13 +10,16 @@
 		<div>
 			<tag-list v-model="selectedTags" />
 		</div>
-		<button @click="$emit('close')">Закрыть</button>
+		<primary-button @click="$emit('close')" class="mt-3"
+			>Закрыть</primary-button
+		>
 	</div>
 </template>
 
 <script setup lang="ts">
 // components
 import TagList from "../../../entities/project/task/ui/TagList.vue";
+import { PrimaryButton } from "../../../shared/ui/primary-button";
 
 import { computed } from "vue";
 import { useFiltersStore } from "../model/store/filterStore";
