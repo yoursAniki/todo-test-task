@@ -55,7 +55,7 @@
 		</div>
 		<div
 			@click="addSubtask"
-			class="subtask-card flex items-center gap-3 border-2 border-dashed border-t-0 mb-4 border-gray-400 px-2 py-1 cursor-pointer select-none"
+			class="subtask-card flex items-center gap-3 border-2 border-dashed border-t-0 border-gray-400 px-2 py-1 cursor-pointer select-none"
 		>
 			<close color="black" class="rotate-45" />
 			<span class="text-gray-400">Добавить подзадачу</span>
@@ -70,7 +70,7 @@ import { PrimaryButton } from "../../../../shared/ui/primary-button";
 import Close from "../../../../shared/ui/icons/Close.vue";
 import Trash from "../../../../shared/ui/icons/Trash.vue";
 
-import { computed, inject, ref } from "vue";
+import { computed, inject, ref, watch } from "vue";
 import type { Task } from "../../../../shared/types/task.types";
 import { TaskStatus } from "../../../../shared/types/task.types";
 import { formatDate } from "../../../../shared/utils/formatDate";
@@ -108,13 +108,12 @@ const taskTemplate = {
 	title: "",
 	status: TaskStatus.Todo,
 	tags: [],
-	subtasks: [],
+	subtasks: JSON.parse(JSON.stringify(props.task.subtasks)) ?? [],
 	createdAt: props.task.createdAt,
 	updatedAt: props.task.updatedAt,
 };
 
 const isDataChanged = computed(() => {
-	console.log(taskData.value, props.task);
 	return !(
 		taskData.value.title === props.task.title &&
 		taskData.value.status === props.task.status &&
@@ -122,10 +121,18 @@ const isDataChanged = computed(() => {
 	);
 });
 
-const taskData = ref<Task>(structuredClone(taskTemplate));
+const taskData = ref<Task>(JSON.parse(JSON.stringify(taskTemplate)));
 
-if (isDataChanged.value)
-	taskData.value = JSON.parse(JSON.stringify(props.task));
+watch(
+	() => props.task,
+	newTask => {
+		taskData.value = JSON.parse(JSON.stringify(newTask));
+	},
+	{ deep: true, immediate: true }
+);
+
+// if (isDataChanged.value)
+// 	taskData.value = JSON.parse(JSON.stringify(props.task));
 
 const saveTask = () => {
 	emit("update-subtask", taskData.value);
@@ -151,7 +158,6 @@ const deleteSubtask = (subTaskId: string) => {
 
 const updateSubtask = (subTask: Task) => {
 	if (!projectId) return;
-
 	store.updateSubtaskInProject(projectId, subTask);
 };
 </script>
@@ -159,23 +165,22 @@ const updateSubtask = (subTask: Task) => {
 <style scoped lang="scss">
 .task-card {
 	border: 2px solid $black;
-
-	.task-card {
-	}
-
-	&.status-todo {
-	}
-
-	&.status-in-progress {
-		background: $yellow;
-	}
-
-	&.status-done {
-		background: $accept-color;
-
-		.save-button {
-			background: $black;
-		}
-	}
 }
+
+// todo доделать стили для статусов
+
+// .status-todo {
+// }
+
+// .status-in-progress {
+// 	background: $yellow;
+// }
+
+// .status-done {
+// 	background: $accept-color;
+
+// 	.save-button {
+// 		background: $black;
+// 	}
+// }
 </style>

@@ -7,6 +7,8 @@ import type { Task, CreateTask } from "../../../../shared/types/task.types";
 import { TaskStatus } from "../../../../shared/types/task.types";
 import { v4 as uuidv4 } from "uuid";
 import { findTask } from "../../../../shared/utils/findTask";
+import { loadAppData, saveAppData } from "../../../../shared/libs/localStorage";
+import { updateTaskRecursive } from "../../../../shared/libs/updateTask";
 
 export const useProjectStore = defineStore("projects", {
 	state: () => ({
@@ -15,29 +17,34 @@ export const useProjectStore = defineStore("projects", {
 
 	actions: {
 		init() {
-			try {
-				const data = localStorage.getItem("projects");
+			const { projects } = loadAppData();
 
-				this.projects = data ? JSON.parse(data) : [];
-			} catch (e) {
-				console.error(e);
+			this.projects = projects;
+		},
 
-				this.projects = [];
-			}
+		save() {
+			const appData = loadAppData();
+			saveAppData({ ...appData, projects: this.projects });
 		},
 
 		addProject(project: CreateProject) {
 			const id = uuidv4();
 
 			this.projects.push({ ...project, id });
+
+			this.save();
 		},
 
 		deleteProject(id: string) {
 			this.projects = this.projects.filter(p => p.id !== id);
+
+			this.save();
 		},
 
 		deleteAllProjects() {
 			this.projects = [];
+
+			this.save();
 		},
 
 		updateProjectName(id: string, newName: string) {
@@ -46,6 +53,8 @@ export const useProjectStore = defineStore("projects", {
 			if (!project) return;
 
 			project.name = newName;
+
+			this.save();
 		},
 
 		addTaskToProject(task: CreateTask, projectId: string) {
@@ -65,6 +74,8 @@ export const useProjectStore = defineStore("projects", {
 				status,
 				id,
 			});
+
+			this.save();
 		},
 
 		deleteTaskFromProject(projectId: string, taskId: string) {
@@ -73,6 +84,8 @@ export const useProjectStore = defineStore("projects", {
 			if (!project) return;
 
 			project.tasks = project.tasks.filter(t => t.id !== taskId);
+
+			this.save();
 		},
 
 		saveTaskToProject(projectId: string, task: Task) {
@@ -80,14 +93,9 @@ export const useProjectStore = defineStore("projects", {
 
 			if (!project) return;
 
-			const index = project.tasks.findIndex(t => t.id === task.id);
+			updateTaskRecursive(project.tasks, task);
 
-			const resultTask = JSON.parse(JSON.stringify(task));
-
-			project.tasks[index] = {
-				...resultTask,
-				updatedAt: new Date(),
-			};
+			this.save();
 		},
 
 		deleteSubtaskFromProject(projectId: string, taskId: string) {
@@ -110,6 +118,8 @@ export const useProjectStore = defineStore("projects", {
 			};
 
 			deleteTaskRecursive(project.tasks, taskId);
+
+			this.save();
 		},
 
 		addSubtaskToTask(
@@ -138,32 +148,14 @@ export const useProjectStore = defineStore("projects", {
 				id,
 				subtasks: [],
 			});
+
+			this.save();
 		},
 
 		updateSubtaskInProject(projectId: string, updatedTask: Task) {
-			const project = this.projects.find(p => p.id === projectId);
-			if (!project) return;
+			this.saveTaskToProject(projectId, updatedTask);
 
-			const updateTaskRecursive = (tasks: Task[], task: Task): boolean => {
-				const index = tasks.findIndex(t => t.id === task.id);
-				if (index !== -1) {
-					tasks[index] = {
-						...JSON.parse(JSON.stringify(task)),
-						updatedAt: new Date(),
-					};
-					return true;
-				}
-				for (const t of tasks) {
-					if (t.subtasks && updateTaskRecursive(t.subtasks, task)) {
-						return true;
-					}
-				}
-				return false;
-			};
-
-			updateTaskRecursive(project.tasks, updatedTask);
+			this.save();
 		},
 	},
-
-	persist: true,
 });

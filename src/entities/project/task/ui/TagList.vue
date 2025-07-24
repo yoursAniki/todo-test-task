@@ -53,7 +53,9 @@ const internalValue = computed({
 });
 
 const removeTag = (tagIndex: number) => {
-	internalValue.value.splice(tagIndex, 1);
+	const newTags = [...internalValue.value];
+	newTags.splice(tagIndex, 1);
+	internalValue.value = newTags;
 };
 
 const newTag = ref("");
@@ -61,7 +63,8 @@ const newTag = ref("");
 const addTag = (tag: string) => {
 	if (!tag) return;
 
-	internalValue.value.push(tag);
+	const newTags = [...internalValue.value, tag];
+	internalValue.value = newTags;
 	newTag.value = "";
 };
 </script>
