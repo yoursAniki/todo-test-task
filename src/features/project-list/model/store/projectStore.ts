@@ -71,7 +71,22 @@ export const useProjectStore = defineStore("projects", {
 
 			if (!project) return;
 
-			project.tasks = project.tasks.filter(task => task.id !== taskId);
+			project.tasks = project.tasks.filter(t => t.id !== taskId);
+		},
+
+		saveTaskToProject(projectId: string, task: Task) {
+			const project = this.projects.find(p => p.id === projectId);
+
+			if (!project) return;
+
+			const index = project.tasks.findIndex(t => t.id === task.id);
+
+			const resultTask = JSON.parse(JSON.stringify(task));
+
+			project.tasks[index] = {
+				...resultTask,
+				updatedAt: new Date(),
+			};
 		},
 	},
 

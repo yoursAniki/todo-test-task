@@ -5,7 +5,7 @@
 		>
 			<li
 				v-for="(tag, index) in internalValue"
-				class="task-tag py-1 px-0.5 flex gap-1"
+				class="task-tag py-1 px-0.5 flex gap-1 items-center"
 			>
 				<span>{{ tag }}</span>
 				<close @click="removeTag(index)" color="white" />
